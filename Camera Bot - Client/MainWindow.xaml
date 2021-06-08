@@ -5,8 +5,23 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Camera_Bot___Client"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Camera Bot" Height="71" Width="250" MinWidth="250" ResizeMode="NoResize" SizeToContent="WidthAndHeight" Icon="Resources/Camera.ico">
+
+
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+
+        <StackPanel Orientation="Horizontal" Margin="4">
+            <Button Name="settings_button" Width="25" Margin="4" Click="settings_button_Click">
+                <Image Source="Resources\Gear.png"/>
+            </Button>
+            
+            <Button Name="pin_button" Width="25" Margin="4" Click="pin_button_Click">
+                <Image Source="Resources\Pin.png"/>
+            </Button>
+        </StackPanel>
     </Grid>
 </Window>

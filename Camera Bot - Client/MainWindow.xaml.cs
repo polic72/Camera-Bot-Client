@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+
 namespace Camera_Bot___Client
 {
     /// <summary>
@@ -24,5 +25,21 @@ namespace Camera_Bot___Client
         {
             InitializeComponent();
         }
+
+
+        #region Buttons
+
+        private void pin_button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+
+        private void settings_button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        #endregion Buttons
     }
 }
