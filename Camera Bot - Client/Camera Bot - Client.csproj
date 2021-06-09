@@ -63,6 +63,7 @@
     <Compile Include="Settings Window.xaml.cs">
       <DependentUpon>Settings Window.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Settings.cs" />
     <Compile Include="WpfScreen.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

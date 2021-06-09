@@ -48,7 +48,7 @@ namespace Camera_Bot___Client
             Left = (this_screen.WorkingArea.Width / 2) - (Width / 2);
 
 
-
+            //
         }
 
 
@@ -56,6 +56,22 @@ namespace Camera_Bot___Client
 
         private void settings_button_Click(object sender, RoutedEventArgs e)
         {
+            Settings settings = new Settings()
+            {
+                IPAddress = new IPAddress(new byte[] { 10, 0, 0, 68 }),
+                Port = 1000, 
+
+                Up = Key.Up,
+                Down = Key.Down,
+                Left = Key.Left,
+                Right = Key.Right
+            };
+
+            settings.SaveToFile("Test.txt");
+
+
+            settings.ReadFromFile("Test.txt");
+
             Settings_Window settings_window = new Settings_Window();
             settings_window.ShowDialog();
         }
