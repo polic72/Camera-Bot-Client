@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -26,6 +28,9 @@ namespace Camera_Bot___Client
         private static Color Normal_Color = new Color();
 
 
+        private byte[] buffer = new byte[1024];
+
+
         public MainWindow()
         {
             InitializeComponent();
@@ -41,6 +46,9 @@ namespace Camera_Bot___Client
 
             Top = 0 + (this_screen.WorkingArea.Height / 8);
             Left = (this_screen.WorkingArea.Width / 2) - (Width / 2);
+
+
+
         }
 
 
@@ -48,7 +56,8 @@ namespace Camera_Bot___Client
 
         private void settings_button_Click(object sender, RoutedEventArgs e)
         {
-
+            Settings_Window settings_window = new Settings_Window();
+            settings_window.ShowDialog();
         }
 
 
@@ -71,6 +80,41 @@ namespace Camera_Bot___Client
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
+            IPHostEntry hostEntry = Dns.GetHostEntry(Dns.GetHostName());
+            IPAddress IP_address = hostEntry.AddressList[0];
+            IPEndPoint server_endPoint = new IPEndPoint(IP_address, 11000);
+
+            
+
+
+            Socket data_sender = new Socket(IP_address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+
+            try
+            {
+                data_sender.Connect(server_endPoint);
+
+                byte[] msg = Encoding.ASCII.GetBytes("This is a test.");
+
+                data_sender.Send(msg);
+
+
+                data_sender.Shutdown(SocketShutdown.Both);
+                data_sender.Close();
+            }
+            catch (ArgumentNullException ane)
+            {
+                Console.WriteLine("ArgumentNullException : {0}", ane.ToString());
+            }
+            catch (SocketException se)
+            {
+                Console.WriteLine("SocketException : {0}", se.ToString());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Unexpected exception : {0}", ex.ToString());
+            }
+
+
             switch (e.Key)
             {
                 case Key.Up:
