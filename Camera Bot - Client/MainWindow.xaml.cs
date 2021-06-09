@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -31,6 +32,10 @@ namespace Camera_Bot___Client
         private byte[] buffer = new byte[1024];
 
 
+        private const string settings_path = "Settings.config";
+        private Settings user_settings;
+
+
         public MainWindow()
         {
             InitializeComponent();
@@ -48,7 +53,22 @@ namespace Camera_Bot___Client
             Left = (this_screen.WorkingArea.Width / 2) - (Width / 2);
 
 
-            //
+            user_settings = new Settings();
+
+            if (File.Exists(settings_path))
+            {
+                user_settings = Settings.FromFile(settings_path);
+            }
+            else
+            {
+                Settings_Window settings_window = new Settings_Window(user_settings);
+                settings_window.ShowDialog();
+
+                if (settings_window.WasCancelled)
+                {
+                    Close();
+                }
+            }
         }
 
 
@@ -56,23 +76,7 @@ namespace Camera_Bot___Client
 
         private void settings_button_Click(object sender, RoutedEventArgs e)
         {
-            Settings settings = new Settings()
-            {
-                IPAddress = new IPAddress(new byte[] { 10, 0, 0, 68 }),
-                Port = 1000, 
-
-                Up = Key.Up,
-                Down = Key.Down,
-                Left = Key.Left,
-                Right = Key.Right
-            };
-
-            settings.SaveToFile("Test.txt");
-
-
-            settings.ReadFromFile("Test.txt");
-
-            Settings_Window settings_window = new Settings_Window();
+            Settings_Window settings_window = new Settings_Window(user_settings);
             settings_window.ShowDialog();
         }
 

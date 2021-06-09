@@ -12,7 +12,7 @@ namespace Camera_Bot___Client
     /// <summary>
     /// The settings used to represent a user's settings.
     /// </summary>
-    public struct Settings
+    public class Settings
     {
         #region Limiters
 

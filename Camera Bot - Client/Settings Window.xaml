@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Camera_Bot___Client"
         mc:Ignorable="d"
         Title="Camera Bot - Settings" Height="265" Width="475" MinHeight="265" MinWidth="475" SizeToContent="WidthAndHeight" Topmost="True" Icon="Resources/Camera.ico" 
-        WindowStartupLocation="CenterOwner">
+        WindowStartupLocation="CenterScreen">
 
 
     <Grid>
@@ -18,8 +18,8 @@
         
 
         <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="4" HorizontalAlignment="Right" VerticalAlignment="Top">
-            <TextBlock Text="IPv4 Address: "/>
-            <TextBox Width="100"/>
+            <TextBlock Name="IPv4_textBlock" Text="IPv4 Address: "/>
+            <TextBox Name="IPv4_textBox" Width="100" TextChanged="IPv4_textBox_TextChanged"/>
 
             <Rectangle Width="25"/>
 
@@ -105,7 +105,7 @@
 
 
         <StackPanel Grid.Row="2" Grid.Column="2" Orientation="Horizontal" Margin="4" HorizontalAlignment="Right" VerticalAlignment="Bottom">
-            <Button Name="enter_button" Content="OK" Height="25" Width="75" Margin="4" IsDefault="True" Click="enter_button_Click"/>
+            <Button Name="enter_button" Content="OK" Height="25" Width="75" Margin="4" IsDefault="True" IsEnabled="False" Click="enter_button_Click"/>
 
             <Button Name="cancel_button" Content="Cancel" Height="25" Width="75" Margin="4" IsCancel="True" Click="cancel_button_Click"/>
         </StackPanel>
