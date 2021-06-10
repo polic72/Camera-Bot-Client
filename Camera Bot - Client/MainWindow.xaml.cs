@@ -32,7 +32,7 @@ namespace Camera_Bot___Client
         private byte[] buffer = new byte[1024];
 
 
-        private const string settings_path = "Settings.config";
+        public const string SETTINGS_PATH = "CameraBot_Settings.config";
         private Settings user_settings;
 
 
@@ -55,9 +55,9 @@ namespace Camera_Bot___Client
 
             user_settings = new Settings();
 
-            if (File.Exists(settings_path))
+            if (File.Exists(SETTINGS_PATH))
             {
-                user_settings = Settings.FromFile(settings_path);
+                user_settings = Settings.FromFile(SETTINGS_PATH);
             }
             else
             {
@@ -150,6 +150,11 @@ namespace Camera_Bot___Client
 
 
                 case Key.Left:
+                    break;
+
+
+                case Key.Escape:
+                    Close();
                     break;
             }
         }

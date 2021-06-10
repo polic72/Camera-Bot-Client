@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Camera_Bot___Client"
         mc:Ignorable="d"
         Title="Camera Bot - Settings" Height="265" Width="475" MinHeight="265" MinWidth="475" SizeToContent="WidthAndHeight" Topmost="True" Icon="Resources/Camera.ico" 
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen" KeyDown="Window_KeyDown">
 
 
     <Grid>
@@ -23,8 +23,8 @@
 
             <Rectangle Width="25"/>
 
-            <TextBlock Text="Port: "/>
-            <TextBox Width="50"/>
+            <TextBlock Name="port_textBlock" Text="Port: "/>
+            <TextBox Name="port_textBox" Width="50" TextChanged="port_textBox_TextChanged"/>
         </StackPanel>
         
 
@@ -89,16 +89,16 @@
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Text="Up: " VerticalAlignment="Center"/>
-                    <Button Name="up_button" Grid.Column="1" Height="25" Width="75" Margin="4" VerticalAlignment="Center"/>
+                    <Button Name="up_button" Grid.Column="1" Height="25" Width="75" Margin="4" VerticalAlignment="Center" Click="up_button_Click"/>
 
                     <TextBlock Text="Down: " Grid.Row="1" VerticalAlignment="Center"/>
-                    <Button Name="down_button" Grid.Row="1" Grid.Column="1" Height="25" Width="75" Margin="4" VerticalAlignment="Center"/>
+                    <Button Name="down_button" Grid.Row="1" Grid.Column="1" Height="25" Width="75" Margin="4" VerticalAlignment="Center" Click="down_button_Click"/>
 
                     <TextBlock Text="Left: " Grid.Row="2" VerticalAlignment="Center"/>
-                    <Button Name="left_button" Grid.Row="2" Grid.Column="1" Height="25" Width="75" Margin="4" VerticalAlignment="Center"/>
+                    <Button Name="left_button" Grid.Row="2" Grid.Column="1" Height="25" Width="75" Margin="4" VerticalAlignment="Center" Click="left_button_Click"/>
 
                     <TextBlock Text="Right: " Grid.Row="3" VerticalAlignment="Center"/>
-                    <Button Name="right_button" Grid.Row="3" Grid.Column="1" Height="25" Width="75" Margin="4" VerticalAlignment="Center"/>
+                    <Button Name="right_button" Grid.Row="3" Grid.Column="1" Height="25" Width="75" Margin="4" VerticalAlignment="Center" Click="right_button_Click"/>
                 </Grid>
             </GroupBox>
         </Grid>
