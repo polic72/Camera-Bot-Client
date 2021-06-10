@@ -215,6 +215,9 @@ namespace Camera_Bot___Client
             enter_button.IsEnabled = false;
             cancel_button.IsEnabled = false;
 
+            IPv4_textBox.IsEnabled = false;
+            port_textBox.IsEnabled = false;
+
             up_button.IsEnabled = false;
             down_button.IsEnabled = false;
             left_button.IsEnabled = false;
@@ -234,8 +237,10 @@ namespace Camera_Bot___Client
                 waiting_button.Content = "[ " + e.Key.ToString() + " ]";
 
                 enter_button.IsEnabled = IsLegal();
-
                 cancel_button.IsEnabled = true;
+
+                IPv4_textBox.IsEnabled = true;
+                port_textBox.IsEnabled = true;
 
                 up_button.IsEnabled = true;
                 down_button.IsEnabled = true;

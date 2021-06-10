@@ -117,5 +117,8 @@
   <ItemGroup>
     <Resource Include="Resources\Camera.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Connect.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
