@@ -240,7 +240,7 @@ namespace Camera_Bot___Client
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (communicator.Connected)
+            if (communicator?.Connected ?? false)
             {
                 communicator.Shutdown(SocketShutdown.Both);
                 communicator.Close();
