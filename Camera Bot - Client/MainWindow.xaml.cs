@@ -16,6 +16,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using CBT_P;
+
 using Screen = System.Windows.Forms.Screen;
 
 
@@ -40,11 +42,16 @@ namespace Camera_Bot___Client
         private Socket communicator;
 
 
+        public readonly BitmapImage Connect_Basic = new BitmapImage(new Uri("pack://application:,,,/Resources/Connect_Basic.png"));
+        public readonly BitmapImage Connect_Good = new BitmapImage(new Uri("pack://application:,,,/Resources/Connect_Good.png"));
+        public readonly BitmapImage Connect_Bad = new BitmapImage(new Uri("pack://application:,,,/Resources/Connect_Bad.png"));
+
+
         public MainWindow()
         {
             InitializeComponent();
 
-            
+
             Normal_Color.R = 221;
             Normal_Color.G = 221;
             Normal_Color.B = 221;
@@ -82,6 +89,21 @@ namespace Camera_Bot___Client
 
         private void settings_button_Click(object sender, RoutedEventArgs e)
         {
+            if (communicator.Connected)
+            {
+                MessageBoxResult result = MessageBox.Show("You are currently connected to the server. You must disconnect before editing the settings. Would you like to do that now?",
+                    "Rhut Rho!", MessageBoxButton.YesNo, MessageBoxImage.Information, MessageBoxResult.Yes);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    connect_button_Click(sender, e);
+                }
+                else
+                {
+                    return;
+                }
+            }
+
             Settings_Window settings_window = new Settings_Window(user_settings);
             settings_window.ShowDialog();
 
@@ -112,19 +134,22 @@ namespace Camera_Bot___Client
                 if (!communicator.Connected)
                 {
                     communicator.Connect(server_endPoint);
+
+                    ((Image)connect_button.Content).Source = Connect_Good;
                 }
                 else
                 {
-                    HandleKnownResponse(SendCommand("Break"));
+                    communicator.Shutdown(SocketShutdown.Both);
+                    communicator.Close();
+
+                    PrepareNewConnection();
                 }
             }
-            catch (ArgumentNullException ane)
+            catch (SocketException ex)
             {
-                MessageBox.Show(ane.ToString(), "ArgumentNullException", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
-            }
-            catch (SocketException se)
-            {
-                MessageBox.Show(se.ToString(), "SocketException", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+                MessageBox.Show("A connection could not be made!\r\n\r\n" + ex.ToString(), ex.GetType().ToString(), MessageBoxButton.OK, MessageBoxImage.Error);
+
+                ((Image)connect_button.Content).Source = Connect_Bad;
             }
             catch (Exception ex)
             {
@@ -146,37 +171,29 @@ namespace Camera_Bot___Client
                         //Can't use switch :< gotta Yandere Dev it.
                         if (e.Key == user_settings.Up)
                         {
-                            HandleKnownResponse(SendCommand("Up"));
+                            SendCommand(Command.Up);
                         }
                         else if (e.Key == user_settings.Down)
                         {
-                            HandleKnownResponse(SendCommand("Down"));
+                            SendCommand(Command.Down);
                         }
                         else if (e.Key == user_settings.Left)
                         {
-                            HandleKnownResponse(SendCommand("Left"));
+                            SendCommand(Command.Left);
                         }
                         else if (e.Key == user_settings.Right)
                         {
-                            HandleKnownResponse(SendCommand("Right"));
+                            SendCommand(Command.Right);
                         }
-                        else if (e.Key == Key.Escape)
-                        {
-                            Close();
-                        }
-                    }
-                    catch (ArgumentNullException ane)
-                    {
-                        MessageBox.Show(ane.ToString(), "ArgumentNullException", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
-                    }
-                    catch (SocketException se)
-                    {
-                        MessageBox.Show(se.ToString(), "SocketException", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
                     }
                     catch (Exception ex)
                     {
                         MessageBox.Show(ex.ToString(), ex.GetType().ToString(), MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
                     }
+                }
+                else if (e.Key == Key.Escape)
+                {
+                    Close();
                 }
             }
         }
@@ -192,6 +209,8 @@ namespace Camera_Bot___Client
             server_endPoint = new IPEndPoint(user_settings.IPAddress, user_settings.Port);
 
             communicator = new Socket(user_settings.IPAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+
+            ((Image)connect_button.Content).Source = Connect_Basic;
         }
 
 
@@ -199,41 +218,51 @@ namespace Camera_Bot___Client
         /// Sends a command to the server.
         /// </summary>
         /// <param name="command">The command to send to the server.</param>
-        /// <returns>The response you get back from the server.</returns>
-        private string SendCommand(string command)
+        private void SendCommand(Command command)
         {
-            communicator.Send(Encoding.ASCII.GetBytes(command));
-
-            int count = communicator.Receive(buffer);
-            return Encoding.ASCII.GetString(buffer, 0, count);
+            communicator.Send(Encoding.ASCII.GetBytes(command.ToString()));
         }
 
 
-        /// <summary>
-        /// Handles a known response from the server.
-        /// </summary>
-        /// <param name="response">The response received from the server.</param>
-        private void HandleKnownResponse(string response)
-        {
-            switch (response)
-            {
-                case "Ok":
-                    //The command was processed.
-                    break;
+        ///// <summary>
+        ///// Sends a command to the server.
+        ///// </summary>
+        ///// <param name="command">The command to send to the server.</param>
+        ///// <returns>The response you get back from the server.</returns>
+        //private string SendCommand(string command)
+        //{
+        //    communicator.Send(Encoding.ASCII.GetBytes(command));
+
+        //    int count = communicator.Receive(buffer);
+        //    return Encoding.ASCII.GetString(buffer, 0, count);
+        //}
 
 
-                case "Goodbye":
-                    communicator.Shutdown(SocketShutdown.Both);
-                    communicator.Close();
+        ///// <summary>
+        ///// Handles a known response from the server.
+        ///// </summary>
+        ///// <param name="response">The response received from the server.</param>
+        //private void HandleKnownResponse(string response)
+        //{
+        //    switch (response)
+        //    {
+        //        case "Ok":
+        //            //The command was processed.
+        //            break;
 
-                    PrepareNewConnection();
-                    break;
+
+        //        case "Goodbye":
+        //            communicator.Shutdown(SocketShutdown.Both);
+        //            communicator.Close();
+
+        //            PrepareNewConnection();
+        //            break;
 
 
-                case "Bad":
-                    throw new InvalidOperationException("The given command is not allowed.");
-            }
-        }
+        //        case "Bad":
+        //            throw new InvalidOperationException("The given command is not allowed.");
+        //    }
+        //}
 
         #endregion Connection Helpers
 

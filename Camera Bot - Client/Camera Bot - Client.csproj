@@ -38,6 +38,9 @@
     <ApplicationIcon>Resources\Camera.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CBT-P">
+      <HintPath>..\..\CBT-P\CBT-P\bin\Debug\CBT-P.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -118,7 +121,11 @@
     <Resource Include="Resources\Camera.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Connect.png" />
+    <Resource Include="Resources\Connect_Basic.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Connect_Bad.png" />
+    <Resource Include="Resources\Connect_Good.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

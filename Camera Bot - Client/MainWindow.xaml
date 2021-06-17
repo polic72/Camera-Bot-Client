@@ -29,7 +29,7 @@
 
         <StackPanel Grid.Column="1" Margin="2" HorizontalAlignment="Right">
             <Button Name="connect_button" Width="30" Margin="4" Click="connect_button_Click">
-                <Image Source="Resources\Connect.png"/>
+                <Image Source="Resources\Connect_Basic.png"/>
             </Button>
         </StackPanel>
     </Grid>
