@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Camera_Bot___Client"
         mc:Ignorable="d"
         Title="Camera Bot" Height="71" Width="250" MinWidth="250" ResizeMode="NoResize" SizeToContent="WidthAndHeight" Icon="Resources/Camera.ico"
-        KeyDown="Window_KeyDown" Closing="Window_Closing">
+        KeyDown="Window_KeyDown" KeyUp="Window_KeyUp" Closing="Window_Closing">
 
 
     <Grid>

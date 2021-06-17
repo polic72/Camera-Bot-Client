@@ -133,12 +133,16 @@ namespace Camera_Bot___Client
             {
                 if (!communicator.Connected)
                 {
+                    Mouse.OverrideCursor = Cursors.Wait;
+
                     communicator.Connect(server_endPoint);
 
                     ((Image)connect_button.Content).Source = Connect_Good;
                 }
                 else
                 {
+                    SendCommand(Command.Disconnect);
+
                     communicator.Shutdown(SocketShutdown.Both);
                     communicator.Close();
 
@@ -149,16 +153,24 @@ namespace Camera_Bot___Client
             {
                 MessageBox.Show("A connection could not be made!\r\n\r\n" + ex.ToString(), ex.GetType().ToString(), MessageBoxButton.OK, MessageBoxImage.Error);
 
+                PrepareNewConnection();
+
                 ((Image)connect_button.Content).Source = Connect_Bad;
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString(), ex.GetType().ToString(), MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
             }
+            finally
+            {
+                Mouse.OverrideCursor = Cursors.Arrow;
+            }
         }
 
         #endregion Buttons
 
+
+        #region Key Handlers
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
@@ -169,7 +181,23 @@ namespace Camera_Bot___Client
                     try
                     {
                         //Can't use switch :< gotta Yandere Dev it.
-                        if (e.Key == user_settings.Up)
+                        if (e.Key == user_settings.Up && Keyboard.IsKeyDown(user_settings.Down))
+                        {
+                            SendCommand(Command.StopDown);
+                        }
+                        else if (e.Key == user_settings.Down && Keyboard.IsKeyDown(user_settings.Up))
+                        {
+                            SendCommand(Command.StopUp);
+                        }
+                        else if (e.Key == user_settings.Left && Keyboard.IsKeyDown(user_settings.Right))
+                        {
+                            SendCommand(Command.StopRight);
+                        }
+                        else if (e.Key == user_settings.Right && Keyboard.IsKeyDown(user_settings.Left))
+                        {
+                            SendCommand(Command.StopLeft);
+                        }
+                        else if (e.Key == user_settings.Up)
                         {
                             SendCommand(Command.Up);
                         }
@@ -186,6 +214,14 @@ namespace Camera_Bot___Client
                             SendCommand(Command.Right);
                         }
                     }
+                    catch (SocketException ex)
+                    {
+                        MessageBox.Show("A connection could not be made!\r\n\r\n" + ex.ToString(), ex.GetType().ToString(), MessageBoxButton.OK, MessageBoxImage.Error);
+
+                        PrepareNewConnection();
+
+                        ((Image)connect_button.Content).Source = Connect_Bad;
+                    }
                     catch (Exception ex)
                     {
                         MessageBox.Show(ex.ToString(), ex.GetType().ToString(), MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
@@ -199,6 +235,67 @@ namespace Camera_Bot___Client
         }
 
 
+        private void Window_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (!e.IsRepeat)
+            {
+                if (communicator.Connected)
+                {
+                    try
+                    {
+                        //Can't use switch :< gotta Yandere Dev it.
+                        if (e.Key == user_settings.Up && Keyboard.IsKeyDown(user_settings.Down))
+                        {
+                            SendCommand(Command.Down);
+                        }
+                        else if (e.Key == user_settings.Down && Keyboard.IsKeyDown(user_settings.Up))
+                        {
+                            SendCommand(Command.Up);
+                        }
+                        else if (e.Key == user_settings.Left && Keyboard.IsKeyDown(user_settings.Right))
+                        {
+                            SendCommand(Command.Right);
+                        }
+                        else if (e.Key == user_settings.Right && Keyboard.IsKeyDown(user_settings.Left))
+                        {
+                            SendCommand(Command.Left);
+                        }
+                        else if (e.Key == user_settings.Up)
+                        {
+                            SendCommand(Command.StopUp);
+                        }
+                        else if (e.Key == user_settings.Down)
+                        {
+                            SendCommand(Command.StopDown);
+                        }
+                        else if (e.Key == user_settings.Left)
+                        {
+                            SendCommand(Command.StopLeft);
+                        }
+                        else if (e.Key == user_settings.Right)
+                        {
+                            SendCommand(Command.StopRight);
+                        }
+                    }
+                    catch (SocketException ex)
+                    {
+                        MessageBox.Show("A connection could not be made!\r\n\r\n" + ex.ToString(), ex.GetType().ToString(), MessageBoxButton.OK, MessageBoxImage.Error);
+
+                        PrepareNewConnection();
+
+                        ((Image)connect_button.Content).Source = Connect_Bad;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.ToString(), ex.GetType().ToString(), MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK);
+                    }
+                }
+            }
+        }
+
+        #endregion Key Handlers
+
+
         #region Connection Helpers
 
         /// <summary>
@@ -208,7 +305,10 @@ namespace Camera_Bot___Client
         {
             server_endPoint = new IPEndPoint(user_settings.IPAddress, user_settings.Port);
 
-            communicator = new Socket(user_settings.IPAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            communicator = new Socket(user_settings.IPAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp)
+            {
+                ReceiveTimeout = 5000   //Lag is bad if this is exceeded.
+            };
 
             ((Image)connect_button.Content).Source = Connect_Basic;
         }
@@ -218,9 +318,21 @@ namespace Camera_Bot___Client
         /// Sends a command to the server.
         /// </summary>
         /// <param name="command">The command to send to the server.</param>
-        private void SendCommand(Command command)
+        /// <returns>The response that it got back from the server.</returns>
+        private Response SendCommand(Command command)
         {
-            communicator.Send(Encoding.ASCII.GetBytes(command.ToString()));
+            communicator.Send(Encoding.ASCII.GetBytes(command.ToString() + "|"));
+
+            int count = communicator.Receive(buffer);
+
+            if (count > -1)
+            {
+                return (Response)Enum.Parse(typeof(Response), Encoding.ASCII.GetString(buffer, 0, count - 1));  //Not a good way to do it.
+            }
+            else
+            {
+                return Response.Bad;
+            }
         }
 
 
@@ -271,6 +383,8 @@ namespace Camera_Bot___Client
         {
             if (communicator?.Connected ?? false)
             {
+                SendCommand(Command.Disconnect);
+
                 communicator.Shutdown(SocketShutdown.Both);
                 communicator.Close();
             }
